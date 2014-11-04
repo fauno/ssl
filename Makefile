@@ -26,7 +26,7 @@ DH_BITS = 512 1024 2048
 DOMAINS = $(shell cat $(DOMAIN_LIST))
 
 # Do the files
-all: PHONY $(FILES) opendkim ssl-self-signed-certs
+all: PHONY $(FILES) ssl-self-signed-certs
 
 make-tmp: PHONY
 	mkdir -p tmp
