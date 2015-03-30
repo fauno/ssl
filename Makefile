@@ -73,8 +73,8 @@ ssl-dirs: PHONY
 DIFFIE_HELLMAN_PARAMS = $(addsuffix .dh,$(addprefix private/,$(DH_BITS)))
 $(DIFFIE_HELLMAN_PARAMS): private/%.dh: | ssl-dirs
 	certtool --generate-dh-params \
-	         --outfile=private/$*.dh \
-	         --bits=$*
+	         --outfile private/$*.dh \
+	         --bits $*
 
 # Generate all dh params
 ssl-dh-params: $(DIFFIE_HELLMAN_PARAMS)
@@ -92,8 +92,8 @@ $(X_SSL_TEMPLATES): tmp/x.%.cfg: mail.yml | bundle make-tmp
 SSL_PRIVATE_KEYS = $(addsuffix .key,$(addprefix private/,$(DOMAINS)))
 $(SSL_PRIVATE_KEYS): | ssl-dirs
 	certtool --generate-privkey \
-	         --outfile=$@ \
-	         --sec-param=$(SECURITY)
+	         --outfile $@ \
+	         --sec-param $(SECURITY)
 
 # Generates all private keys
 ssl-private-keys: $(SSL_PRIVATE_KEYS)
@@ -107,17 +107,17 @@ ssl-private-keys: $(SSL_PRIVATE_KEYS)
 SSL_SELF_SIGNED_CERTS = $(addsuffix .crt,$(addprefix certs/,$(DOMAINS)))
 $(SSL_SELF_SIGNED_CERTS): certs/%.crt: private/%.key tmp/%.cfg
 	certtool --generate-self-signed \
-	         --outfile=$@ \
-	         --load-privkey=$< \
-	         --template=tmp/$*.cfg
+	         --outfile $@ \
+	         --load-privkey $< \
+	         --template tmp/$*.cfg
 
 # Wildcard domains are generated using the same key
 X_SSL_SELF_SIGNED_CERTS = $(addsuffix .crt,$(addprefix certs/x.,$(DOMAINS)))
 $(X_SSL_SELF_SIGNED_CERTS): certs/x.%.crt: private/%.key tmp/x.%.cfg
 	certtool --generate-self-signed \
-	         --outfile=$@ \
-	         --load-privkey=$< \
-	         --template=tmp/x.$*.cfg
+	         --outfile $@ \
+	         --load-privkey $< \
+	         --template tmp/x.$*.cfg
 
 # Generates all self signed certs including wildcard
 ssl-self-signed-certs: $(SSL_SELF_SIGNED_CERTS) $(X_SSL_SELF_SIGNED_CERTS)
@@ -130,16 +130,16 @@ ssl-self-signed-certs: $(SSL_SELF_SIGNED_CERTS) $(X_SSL_SELF_SIGNED_CERTS)
 SSL_REQUEST_CERTS = $(addsuffix .csr,$(addprefix private/,$(DOMAINS)))
 $(SSL_REQUEST_CERTS): private/%.csr: private/%.key tmp/%.cfg
 	certtool --generate-request \
-	         --outfile=$@ \
-	         --load-privkey=$< \
-	         --template=tmp/$*.cfg
+	         --outfile $@ \
+	         --load-privkey $< \
+	         --template tmp/$*.cfg
 
 X_SSL_REQUEST_CERTS = $(addsuffix .csr,$(addprefix private/x.,$(DOMAINS)))
 $(X_SSL_REQUEST_CERTS): private/x.%.csr: private/%.key tmp/x.%.cfg
 	certtool --generate-request \
-	         --outfile=$@ \
-	         --load-privkey=$< \
-	         --template=tmp/x.$*.cfg
+	         --outfile $@ \
+	         --load-privkey $< \
+	         --template tmp/x.$*.cfg
 
 # Generate all SSL requests
 ssl-request-certs: $(SSL_REQUEST_CERTS) $(X_SSL_REQUEST_CERTS)
